@@ -1,4 +1,4 @@
-package com.usermanager.security;
+package com.usermanager.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -9,6 +9,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.usermanager.exception.ExpiredTokenException;
 import com.usermanager.exception.InvalidTokenException;
+import com.usermanager.service.JwtTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +19,19 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class JwtTokenService {
+public class JwtTokenServiceImpl implements JwtTokenService {
     public static final int VALID_TOKEN_MINUTES = 60;
     public static final int MAX_TOKEN_REFRESH = 1;
-    public Cache<String, Integer> tokenCache =
+    private Cache<String, Integer> tokenCache =
             CacheBuilder.newBuilder()
                         .expireAfterWrite(VALID_TOKEN_MINUTES, TimeUnit.MINUTES)
                         .build();
-    @Value("${security.secret}")
-    private String secret;
+
+    private final String secret;
+
+    public JwtTokenServiceImpl(@Value("${security.secret}") String secret) {
+        this.secret = secret;
+    }
 
     public String generateJwtToken(String email) {
         String jwtId = UUID.randomUUID().toString();

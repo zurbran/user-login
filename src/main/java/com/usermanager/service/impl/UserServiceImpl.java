@@ -11,7 +11,7 @@ import com.usermanager.mapper.UserLoginSuccessMapper;
 import com.usermanager.mapper.UserSuccessSignUpMapper;
 import com.usermanager.repository.UserPhoneRepository;
 import com.usermanager.repository.UserRepository;
-import com.usermanager.security.JwtTokenService;
+import com.usermanager.service.JwtTokenService;
 import com.usermanager.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +42,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(dto.getPassword());
         user.setIsActive(true);
         userRepository.save(user);
-        dto.getPhones().forEach(phone -> phone.setUser(user));
-        userPhoneRepository.saveAll(dto.getPhones());
+        if (dto.getPhones() != null) {
+            dto.getPhones().forEach(phone -> phone.setUser(user));
+            userPhoneRepository.saveAll(dto.getPhones());
+        }
         String accessToken = jwtTokenService.generateJwtToken(userEmail);
         return UserSuccessSignUpMapper.UserToUserSuccessSignUpResponse(user, accessToken);
     }
