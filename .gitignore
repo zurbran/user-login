@@ -1,0 +1,13 @@
+*.idea
+!.idea/codeStyles/*
+*.iml
+*.swp
+target/
+build/
+.settings
+.classpath
+.project
+
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
+bin/
